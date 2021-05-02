@@ -1,0 +1,283 @@
+{
+	"info": {
+		"_postman_id": "0820499d-bc07-4aaa-a51b-d50eb23b278d",
+		"name": "New_Student",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sign up student",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"studentFirstName\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));",
+									"pm.environment.set(\"studentLastName\", pm.variables.replaceIn(\"{{$randomLastName}}\"));",
+									"pm.environment.set(\"studentEmail\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+									"pm.environment.set(\"dob_year\", _.random(1935,2013));",
+									"pm.environment.set(\"dob_day\", _.random(1,28));",
+									"pm.environment.set(\"dob_month\", _.random(1,12));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(globals.pm);",
+									"",
+									"describe('Register a new talentTEK Student', function() {",
+									"    // Assertion",
+									"    it('should return 201', function() {",
+									"        response.should.have.status(201);",
+									"    });",
+									"      // Assertion",
+									"    it ('should return success as true', function(){",
+									"           response.body.should.have.property (\"success\").and.equal (true);",
+									"     });",
+									"   // Assertion",
+									"    it ('should return success message', function(){",
+									"           response.body.should.have.property (\"message\").and.equal (\"Registration Success\");",
+									"     });",
+									"// store new student Id from reponse body",
+									"    pm.environment.set(\"student_id\", response.body.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{studentFirstName}}\",\n    \"lastName\": \"{{studentLastName}}\",\n    \"email\": \"{{studentEmail}}\",\n    \"password\": \"123456\",\n    \"confirmPassword\": \"123456\",\n    \"dob\": {\n        \"year\": {{dob_year}},\n        \"month\": {{dob_month}},\n        \"day\": {{dob_day}}\n    },\n    \"gender\": \"female\",\n    \"agree\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/signup",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm registration",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(globals.pm);",
+									"",
+									"describe('Verify if student is created or not', function() {",
+									"    // Assertion",
+									"    it('should return 200', function() {",
+									"        response.should.have.status(200);",
+									"    });",
+									"      // Assertion",
+									"    it ('should return message as Student Found', function(){",
+									"           response.body.should.have.property (\"message\").and.equal ('Student Found');",
+									"     });",
+									"   // Assertion",
+									"    it ('should return expected first name', function(){",
+									"           response.body.data.should.have.property (\"firstName\").and.equal (environment.studentFirstName);",
+									"     });",
+									"   // Assertion",
+									"    it ('should return expected last name', function(){",
+									"           response.body.data.should.have.property (\"lastName\").and.equal (environment.studentLastName);",
+									"     });",
+									"     // Assertion",
+									"    it ('should return expected student id', function(){",
+									"           response.body.data.should.have.property (\"studentId\").and.equal (environment.student_id);",
+									"     });",
+									"       // Assertion",
+									"    it ('should return expected student email', function(){",
+									"           response.body.data.should.have.property (\"email\").and.equal (environment.studentEmail);",
+									"     });",
+									"        // Assertion",
+									"    it ('should return expected agree value', function(){",
+									"           response.body.data.should.have.property (\"agree\").and.equal (true);",
+									"     });",
+									"        // Assertion",
+									"    it ('should return expected DOB', function(){",
+									"        var x = environment.dob_year;",
+									"        var y = environment.dob_month;",
+									"        var n = environment.dob_day;",
+									"        var expDOB = x+\"-\"+y+\"-\"+n;",
+									"        response.body.data.should.have.property (\"dob\").and.equal(expDOB);",
+									"     });",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{studentFirstName}}\",\n    \"lastName\": \"{{studentLastName}}\",\n    \"email\": \"{{studentEmail}}\",\n    \"password\": \"123456\",\n    \"confirmPassword\": \"123456\",\n    \"dob\": {\n        \"year\": {{dob_year}},\n        \"month\": {{dob_month}},\n        \"day\": {{dob_day}}\n    },\n    \"gender\": \"female\",\n    \"agree\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/student/{{student_id}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"student",
+								"{{student_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log in with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"{{student_id}}\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log in with email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(globals.pm);",
+									"",
+									"describe('Verify if student is created or not', function() {",
+									"    // Assertion",
+									"    it('should return 200', function() {",
+									"        response.should.have.status(200);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{studentEmail}}\",\n    \"password\": \"123456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Postman BDD",
+			"item": [
+				{
+					"name": "BDD",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"postman.setGlobalVariable('pm', responseBody)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://bigstickcarpet.com/postman-bdd/dist/postman-bdd.js",
+							"protocol": "http",
+							"host": [
+								"bigstickcarpet",
+								"com"
+							],
+							"path": [
+								"postman-bdd",
+								"dist",
+								"postman-bdd.js"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
